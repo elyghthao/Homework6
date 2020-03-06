@@ -20,9 +20,9 @@ public class MyMiniSearchEngine {
         indexes = new HashMap<String, List<List<Integer>>>();
 
         for (int i = 0; i<texts.size();i++) {
-            String [] words = texts.get(i).split(" ");//breaks up the string into an array of words
+            String [] words = texts.get(i).toLowerCase().split(" ");//breaks up the string into an array of words
 
-            //This adds words to the hashmap along with what string and their location
+            //This adds words to the HashMap along with what string and their location
             for (int j=0;j<words.length;j++) {
                 //This checks if a keyword is already present or not
                 if (!indexes.containsKey(words[j])) {
