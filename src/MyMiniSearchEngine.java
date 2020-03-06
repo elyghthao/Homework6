@@ -18,34 +18,14 @@ public class MyMiniSearchEngine {
     private void index(List<String> texts) {
         //homework
         indexes = new HashMap<String, List<List<Integer>>>();
-        List<List<Integer>> yes = new ArrayList<List<Integer>>();
-        yes.add(new ArrayList<Integer>(Arrays.asList(1,2,3))) ;
-        yes.add(new ArrayList<Integer>(Arrays.asList(1,2,3))) ;
-        List<List<Integer>> bye = new ArrayList<List<Integer>>();
-        bye.add(new ArrayList<Integer>(Arrays.asList(1,2,3))) ;
-        bye.add(new ArrayList<Integer>(Arrays.asList(1,2,3))) ;
-//        indexes.put("bye",bye);
-//        indexes.put("hello", yes);
-
-//        for (int i =0;i<texts.size();i++) {
-//            indexes.
-//        }
-
-
-//        System.out.println(indexes.get("hello"));
-//        System.out.println(indexes.containsKey("hello"));
-
-
 
         for (int i = 0; i<texts.size();i++) {
-//            System.out.println(texts.get(i));
-            String [] words = texts.get(i).split(" ");
-//            System.out.println(Arrays.toString(words));
-            for (int j=0;j<words.length;j++) {//this traverses words array of strings
-                if (indexes.containsKey(words[j])) {
-//                    System.out.print("found value is: " + words[j]);
-//                    System.out.print("true, index: " + j) ;
-                }else {
+            String [] words = texts.get(i).split(" ");//breaks up the string into an array of words
+
+            //This adds words to the hashmap along with what string and their location
+            for (int j=0;j<words.length;j++) {
+                //This checks if a keyword is already present or not
+                if (!indexes.containsKey(words[j])) {
                     List<List<Integer>> temporary = new ArrayList<List<Integer>>();
                     for(int t = 0; t<texts.size();t++) {
                         temporary.add(new ArrayList<Integer>()) ;
@@ -54,12 +34,8 @@ public class MyMiniSearchEngine {
                 }
                 indexes.get(words[j]).get(i).add(j);
             }
-//            System.out.println("\n");
-
         }
-        System.out.println(indexes) ;
-
-
+//        System.out.println(indexes);
     }
 
     // search(key) return all the document ids where the given key phrase appears.
@@ -69,40 +45,63 @@ public class MyMiniSearchEngine {
         // homework
         HashMap<Integer, List<List<Integer>>> documents = new HashMap<Integer, List<List<Integer>>>();
         String [] words = keyPhrase.toLowerCase().split(" ");
-        System.out.println(Arrays.toString(words));
         List<List<Integer>> list;
-
         List<Integer> sameDocs = new ArrayList<>();
+        List<Integer> data;
 
 
+        //This loop identifies every word and  stores their doc location and order location into the documents HashMap
         for(int i = 0; i< words.length;i++) {//traverse from each word to word
             if (indexes.containsKey(words[i])) {
                 List<List<Integer>> temporary = new ArrayList<List<Integer>>();
                 for (int j = 0; j<indexes.get(words[i]).size();j++) {//traverse each element in documents
                      list = new ArrayList<>();
                         list.add(indexes.get(words[i]).get(j));
-//                        documents.put(i,temporary);
-//                        System.out.println(list);
+
                         temporary.add(list.get(0));
                 }
                 documents.put(i,temporary);
             }
         }
-        System.out.println(documents);
-//        System.out.println(documents.get(0).size());
+//        System.out.println(documents);
 
-        for (int i = 0;i<documents.get(0).size();i++) {
-            System.out.println(i);
+        //This checks if documents is empty (if by chance there is no where in the provided strings with the keyword then the program ends
+        if (documents.isEmpty()) {
+            return sameDocs;
         }
 
+        //This adds all of the location of each word in each document to the array list data
+        for (int i = 0;i<documents.get(0).size();i++) {//traverse number of elements
+             data = new ArrayList<>();
+            for (int j = 0; j<documents.size();j++) {//traverse each document ex. doc 0
+                for (int t = 0;t<documents.get(j).get(i).size();t++) {
+                    if (!data.contains(documents.get(j).get(i).get(t))) {
+                        data.add(documents.get(j).get(i).get(t));
+                    }
+                }
+            }
+//            System.out.println(data);
 
-
-//        indexes.forEach((k,v)-> {//traverses the entire indexes
-//            System.out.println(k + " " +v.size());
-//                });
-
-
-
-        return new ArrayList<>(); // place holder
+            //This checks if the provided data is in any of the strings
+            //I know the data is in a string if the # of data elements and # of words array elements are the same
+                if (data.size() == words.length) {
+                    //isCollectionSorted() is a method that checks if all the values are in order and only one value away from each other
+                    //for ex. [0,1,2,3]
+                    if(isCollectionSorted(data)) {
+                        sameDocs.add(i);//if both tests past, number of String is added to sameDocs
+                    }
+                }
+        }
+        return  sameDocs;
+    }
+    public boolean isCollectionSorted(List<Integer> list) {
+        for (int i = 0; i<list.size();i++) {
+            if (i!=list.size()-1) {
+                if ( list.get(i) + 1 != list.get(i+1)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
